@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Пошаговая инструкция</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.8/styles/default.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.8/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+  </head>
+  <body>
+    <nav class="navbar is-black has-righted-menu" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+          <a class="navbar-item logo" href="index.html">
+            <p>Создание нейронной сети<br>на Python</p>
+          </a>
+      
+          <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+          </a>
+        </div>
+      
+        <div id="navbarBasicExample" class="navbar-menu">
+          <div class="navbar-start">
+            <a class="navbar-item" href="instruction.html">
+              Пошаговая инструкция
+            </a>
+      
+            <a class="navbar-item" href="recommendations.html">
+              Рекомендации
+            </a>
+      
+            <a class="navbar-item" href="links.html">
+              Полезные ссылки
+            </a>
+          </div>
+        </div>
+    </nav>
+    <section class="section title">
+        <div class="container">
+          <div class="block">
+            <h1 class="title">
+              Пошаговая инструкция
+            </h1>
+          </div>
+          <div class="block">
+            <p class="subtitle">
+                Пример создания простой нейронной сети типа простой персептрон<br>для решения задачи классификации изображений на Python
+            </p>
+          </div>
+        </div>
+    </section>
+    <section class="section">
+        <div class="container">
+            <div class="block">
+                <p class="text">
+                    Имеется множество изображений элементов одежды, разделенных на классы по принадлежности к тому или иному типу одежды. 
+                    Задано множество изображений, для которых известно, к каким классам они относятся (обучающая выборка). 
+                    Принадлежность остальных изображений неизвестна. Необходимо построить и обучить нейронную сеть, способную классифицировать изображение объекта.
+                </p>
+            </div>
+            <div class="block">
+                <p class="text">
+                    Для решения поставленной задачи будем использовать нейронную сеть типа <b>многослойный персептрон</b>
+                </p>
+            </div>
+            <div class="block">
+                <p class="center"><img class="center" src="images/1.png" alt="многослойный персептрон"></p>
+            </div>
+            <div class="block">
+                <p class="text">
+                    В ходе разработки нейронной сети будем опираться на учебное пособие с официального сайта TensorFlow: <a>https://www.tensorflow.org</a>.
+                </p>
+            </div>
+        </div>
+    </section>
+    <section class="section">
+        <div class="container">
+            <div class="block">
+                <h3>
+                    Установка и импорт зависимостей
+                </h3>
+            </div>
+            <div class="block">
+                <p class="text">
+                    Будем использовать библиотеку для решения задач построения и тренировки нейронной сети <b>TensorFlow</b> и ее надстройку <b>Keras</b>, а также библиотеку для работы с многомерными массивами и матрицами <b>NumPy</b>.
+                </p>
+            </div>
+            <div class="block">
+                <p class="text">
+                    Предварительно установим библиотеки, введя в терминале следующие команды:
+                </p>
+            </div>
+            <div class="block">
+                <pre>
+                    <code>
+                        pip install numpy
+                        pip install tensorflow
+                        pip install keras
+                    </code>
+                </pre>
+            </div>
+            <div class="block">
+                <p class="text">
+                    Импортируем в проект библиотеку TensorFlow, API, который упрощает загрузку наборов данных и доступ к ним и предоставляет несколько примеров наборов данных для работы, а также несколько вспомогательных библиотек:
+                </p>
+            </div>
+            <div class="block">
+                <pre>
+                    <code>
+                        !pip install -U tensorflow_datasets
+
+                        import tensorflow as tf
+                        
+                        # импорт набора данных TensorFlow
+                        import tensorflow_datasets as tfds
+                        tfds.disable_progress_bar()
+                        
+                        # импорт вспомогательных библиотек
+                        import math
+                        import numpy as np
+                        import matplotlib.pyplot as plt
+                    </code>
+                </pre>
+            </div>
+        </div>
+    </section>
+    <section class="section">
+        <div class="container">
+            <div class="block">
+                <h3>
+                    Импорт набора данных Fashion MNIST
+                </h3>
+            </div>
+            <div class="block">
+                <p class="text">
+                    Для обучения создаваемой нейронной сети будем использовать набор данных Fashion MNIST, содержащий 70000 черно-белых изображений размером 28 на 28 пикселей. Каждое изображение связано с одной меткой (названием предмета одежды) из 10 классов.
+                </p>
+            </div>
+            <div class="block">
+                <p class="center"><img class="center" src="images/2.png" alt="Fashion MNIST"></p>
+            </div>
+            <div class="block">
+                <p class="text">
+                    Обратиться к набору данных MNIST можно непосредственно через TensorFlow, используя API:
+                </p>
+            </div>
+            <div class="block">
+                <pre>
+                    <code>
+                        dataset, metadata = tfds.load('fashion_mnist', as_supervised=True, with_info=True)
+                        train_dataset, test_dataset = dataset['train'], dataset['test']
+                    </code>
+                </pre>
+            </div>
+            <div class="block">
+                <p class="text">
+                    Загрузив данные, получим метаданные, а также обучающий набор данных (train_dataset) и тестовый набор данных (test_dataset).<br> 
+                    Изображения в этих наборах представляют собой массивы 28 на 28, со значениями каждого пикселя в диапазоне [0, 255].<br>
+                    Метки представляют собой массив целых чисел в диапазоне [0, 9] и соответствуют одному из 10 классов одежды.
+                </p>
+            </div>
+            <div class="block">
+                <p class="center"><img class="center" src="images/3.png" alt="table"></p>
+            </div>
+            <div class="block">
+                <p class="text">
+                    Поскольку имена классов не включены в набор данных, их нужно присвоить и сохранить, чтобы позже использовать при построении изображений:
+                </p>
+            </div>
+            <div class="block">
+                <pre>
+                    <code>
+                        class_names = metadata.features['label'].names
+                        print("Class names: {}".format(class_names))
+                    </code>
+                </pre>
+            </div>
+            <div class="block">
+                <p class="text">
+                    Получим следующий вывод:
+                </p>
+            </div>
+            <div class="block">
+                <pre>
+                    <code class="nohighlight">
+                        Class names: ['T-shirt/top', 'Trouser', 'Pullover', 'Dress', 'Coat', 'Sandal', 'Shirt', 'Sneaker', 'Bag', 'Ankle boot']
+                    </code>
+                </pre>
+            </div>
+        </div>
+    </section>
+    <section class="section">
+        <div class="container">
+            <div class="block">
+                <h3>
+                    Изучение данных
+                </h3>
+            </div>
+            <div class="block">
+                <p class="text">
+                    Перед обучением модели необходимо изучить формат и структуру данных:
+                </p>
+            </div>
+            <div class="block">
+                <pre>
+                    <code>
+                        num_train_examples = metadata.splits['train'].num_examples
+                        num_test_examples = metadata.splits['test'].num_examples
+                        print("Number of training examples: {}".format(num_train_examples))
+                        print("Number of test examples:     {}".format(num_test_examples))
+                    </code>
+                </pre>
+            </div>
+            <div class="block">
+                <p class="text">
+                    В обучающем наборе содержится 60000 изображений, а в тестовом наборе — 10000 изображений:
+                </p>
+            </div>
+            <div class="block">
+                <pre>
+                    <code class="nohighlight">
+                        Number of training examples: 60000
+                        Number of test examples:     10000
+                    </code>
+                </pre>
+            </div>
+        </div>
+    </section>
+    <section class="section">
+        <div class="container">
+            <div class="block">
+                <h3>
+                    Предварительная обработка данных
+                </h3>
+            </div>
+            <div class="block">
+                <p class="text">
+                    Значение каждого пикселя в изображении является целым числом в диапазоне [0,255]. Чтобы модель работала корректно, эти значения должны быть нормализованы до диапазона [0,1]. Для этого создаем функцию нормализации, а затем применяем ее к каждому изображению в обучающем и тестовом наборах данных:
+                </p>
+            </div>
+            <div class="block">
+                <pre>
+                    <code>
+                        def normalize(images, labels):
+                            images = tf.cast(images, tf.float32)
+                            images /= 255
+                            return images, labels
+    
+                        # метод map применяет функцию normalize к каждому элементу
+                        # в тренировочном и тестовом наборах данных
+                        train_dataset =  train_dataset.map(normalize)
+                        test_dataset  =  test_dataset.map(normalize)
+    
+                        # при первом использовании набора данных изображения будут загружены с диска
+                        # кэшируем их для сохранения в памяти, чтобы ускорить обучение
+                        train_dataset =  train_dataset.cache()
+                        test_dataset  =  test_dataset.cache()
+                    </code>
+                </pre>
+            </div>
+        </div>
+    </section>
+    <section class="section">
+        <div class="container">
+            <div class="block">
+                <h3>
+                    Изучение обработанных данных
+                </h3>
+            </div>
+            <div class="block">
+                <p class="text">
+                    Выведем на экран первые 25 изображений из обучающего набора с указанием названия класса под каждым изображением:
+                </p>
+            </div>
+            <div class="block">
+                <pre>
+                    <code>
+                        plt.figure(figsize=(10,10))
+                        for i, (image, label) in enumerate(train_dataset.take(25)):
+                            image = image.numpy()
+                            plt.subplot(5,5,i+1)
+                            plt.xticks([])
+                            plt.yticks([])
+                            plt.grid(False)
+                            plt.imshow(image, cmap=plt.cm.binary)
+                            plt.xlabel(class_names[label])
+                        plt.show()
+                    </code>
+                </pre>
+            </div>
+            <div class="block">
+                <p class="text">
+                    Получим следующий результат:
+                </p>
+            </div>
+            <div class="block">
+                <p class="center"><img class="center" src="images/4.png"></p>
+            </div>
+            <div class="block">
+                <p class="text">
+                    После этого можно приступать к  процессу создания и обучения нейронной сети.
+                </p>
+            </div>
+        </div>
+    </section>
+    <section class="section">
+        <div class="container">
+            <div class="block">
+                <h3>
+                    Построение модели
+                </h3>
+            </div>
+            <div class="block">
+                <h4>
+                    Настройка слоев
+                </h4>
+            </div>
+            <div class="block">
+                <p class="text">
+                    Разрабатываемая нейронная сеть будет состоять из трех слоев:<br><br>
+                    <b>Входной слой tf.keras.layers.Flatten</b> — слой, преобразующий изображения из двумерного массива размером 28 на 28 пикселей в одномерный массив размером 784 пикселя. Не имеет параметров для обучения, преобразует входные данные путем распаковки пикселей изображения и выстраивания их в один ряд.<br><br>
+                    <b>Скрытый слой tf.keras.layers.Dense</b> — полносвязный слой (слой, выходные нейроны которого связаны со всеми входными нейронами), состоящий из 128 нейронов. Каждый нейрон этого слоя принимает входные данные от всех нейронов предыдущего слоя, изменяет их и выводит единственное значение на следующий уровень. Для передачи выхода нейронов одного слоя следующему слою необходимо использовать <b>функцию активации</b>. На данном слое будем использовать функцию активации <b>ReLu</b>, позволяющую решать нелинейные задачи.<br><br>
+                    <b>Выходной слой ts.keras.layers.Dense</b> — слой softmax, состоящий из 10 узлов. Функция активации <b>Softmax</b> используется для последнего слоя глубоких нейронных сетей при решении задач классификации, и вычисляет вероятности для каждого возможного выходного класса. Последний слой принимает входные данные от нейронов предыдущего слоя и выводит значение в диапазоне [0, 1], представляющее вероятность того, что изображение принадлежит к тому или иному классу.
+                </p>
+            </div>
+            <div class="block">
+                <p class="text">
+                    Создадим модель:
+                </p>
+            </div>
+            <div class="block">
+                <pre>
+                    <code>
+                        model = tf.keras.Sequential([
+                            tf.keras.layers.Flatten(input_shape=(28, 28, 1)),
+                            tf.keras.layers.Dense(128, activation=tf.nn.relu),
+                            tf.keras.layers.Dense(10, activation=tf.nn.softmax)
+                        ])
+                    </code>
+                </pre>
+            </div>
+            <div class="block">
+                <h4>
+                    Компиляция модели
+                </h4>
+            </div>
+            <div class="block">
+                <p class="text">
+                    Перед тем, как приступить к обучению модели, на этапе компиляции (сборки) модели необходимо выполнить еще несколько настроек:
+                </p>
+            </div>
+            <div class="content">
+                <ul>
+                    <li><b>функция потерь</b> — алгоритм для измерения того, насколько далеки выходные данные модели от ожидаемого результата</li>
+                    <li><b>функция оптимизации</b> — алгоритм настройки внутренних параметров модели с целью минимизации потерь</li>
+                    <li><b>параметры</b> — используются для мониторинга этапов обучения и тестирования</li>
+                </ul>
+            </div>
+            <div class="block">
+                <p class="text">
+                    В разрабатываемой нейронной сети будут использоваться:
+                </p>
+            </div>
+            <div class="content">
+                <ul>
+                    <li>алгоритм оптимизации <b>Adam</b> — модификация обычного стохастического градиентного спуска</li>
+                    <li><b>перекрестная энтропия</b> в качестве функции потерь (т. к. является оптимальной при процессе обучения сети с softmax)</li>
+                    <li>и такой параметр, как <b>точность</b>, определяющий долю корректно классифицированных изображений</li>
+                </ul>
+            </div>
+            <div class="block">
+                <pre>
+                    <code>
+                        model.compile(optimizer='adam',
+                                      loss=tf.keras.losses.SparseCategoricalCrossentropy(),
+                                      metrics=['accuracy'])
+                    </code>
+                </pre>
+            </div>
+        </div>
+    </section>
+    <section class="section">
+        <div class="container">
+            <div class="block">
+                <h3>
+                    Тренировка модели
+                </h3>
+            </div>
+            <div class="block">
+                <p class="text">
+                    Определим действия, требующиеся для обучения нейронной сети на тренировочном наборе:
+                </p>
+            </div>
+            <div class="content">
+                <ol>
+                    <li>Бесконечное количество раз повторяем набор входных данных, используя метод <code>dataset.repeat()</code>.</li>
+                    <li>Перемешиваем изображения, чтобы порядок, в котором подаются входные данные, не влиял на обучение модели, используя метод <code>dataset.shuffle()</code>.</li>
+                    <li>Сообщаем о том, что при обновлении переменных модели будут использоваться пакеты (батчи) по 32 изображения с подписями к ним.</li>
+                </ol>
+            </div>
+            <div class="block">
+                <p class="text">
+                    Обучение производим путем вызова метода <code>model.fit</code>:
+                </p>
+            </div>
+            <div class="content">
+                <ul>
+                    <li>передаем тренировочные данные на вход модели, используя <code>train_dataset</code></li>
+                    <li>модель учится ассоциировать изображения с их метками</li>
+                    <li>обучение ограничивается 5-ю полными итерациями обучающего набора данных, что указывается с помощью параметра <code>epochs=5</code> метода <code>dataset.repeat()</code>. Таким образом, обучение происходит на 30 тысячах примеров (5 итераций по 6000 изображений в каждой)</li>
+                </ul>
+            </div>
+            <div class="block">
+                <pre>
+                    <code>
+                        BATCH_SIZE = 32
+                        train_dataset = train_dataset.cache().repeat().shuffle(num_train_examples).batch(BATCH_SIZE)
+                        test_dataset = test_dataset.cache().batch(BATCH_SIZE)
+
+                        model.fit(train_dataset, epochs=5, steps_per_epoch=math.ceil(num_train_examples/BATCH_SIZE))
+                    </code>
+                </pre>
+            </div>
+            <div class="block">
+                <p class="text">
+                    На каждой итерации процесса обучения модели отображаются показатели потерь <b>(loss)</b> и точности <b>(accuracy)</b>. Данная модель достигает около 89% точности на тренировочном наборе данных:
+                </p>
+            </div>
+            <div class="block">
+                <pre>
+                    <code>
+                        Epoch 1/5
+                        1875/1875 [==============================] - 16s 4ms/step - loss: 0.4999 - accuracy: 0.8255
+                        Epoch 2/5
+                        1875/1875 [==============================] - 10s 5ms/step - loss: 0.3744 - accuracy: 0.8652
+                        Epoch 3/5
+                        1875/1875 [==============================] - 8s 4ms/step - loss: 0.3387 - accuracy: 0.8769
+                        Epoch 4/5
+                        1875/1875 [==============================] - 7s 4ms/step - loss: 0.3120 - accuracy: 0.8861
+                        Epoch 5/5
+                        1875/1875 [==============================] - 8s 4ms/step - loss: 0.2942 - accuracy: 0.8908
+                    </code>
+                </pre>
+            </div>
+        </div>
+    </section>
+    <section class="section">
+        <div class="container">
+            <div class="block">
+                <h3>
+                    Оценка точности
+                </h3>
+            </div>
+            <div class="block">
+                <p class="text">
+                    Теперь необходимо проверить точность работы модели на тестовых данных — всех примерах, которые есть в тестовом наборе данных:
+                </p>
+            </div>
+            <div class="block">
+                <pre>
+                    <code>
+                        test_loss, test_accuracy = model.evaluate(test_dataset, steps=math.ceil(num_test_examples/32))
+                        print('Accuracy on test dataset:', test_accuracy)
+                    </code>
+                </pre>
+            </div>
+            <div class="block">
+                <p class="text">
+                    Получив выходные данные, можно заметить, что точность модели на тестовом наборе данных меньше, чем на обучающем. Это объясняется тем, что модель была обучена только на одном наборе данных <b>train_dataset</b>. В тестовом наборе данных <b>(test_dataset)</b> она получила изображения, которые никогда «не видела» во время обучения, поэтому производительность модели снижается:
+                </p>
+            </div>
+            <div class="block">
+                <pre>
+                    <code>
+                        313/313 [==============================] - 2s 5ms/step - loss: 0.3344 - accuracy: 0.8810
+                        Accuracy on test dataset: 0.8809999823570251
+                    </code>
+                </pre>
+            </div>
+        </div>
+    </section>
+    <section class="section">
+        <div class="container">
+            <div class="block">
+                <h3>
+                    Предсказание и исследование
+                </h3>
+            </div>
+            <div class="block">
+                <p class="text">
+                    Обучив модель, ее можно использовать для определения принадлежности некоторого изображения к классу.<br>
+                    Определим метки для каждого изображения в тестовом наборе данных:
+                </p>
+            </div>
+            <div class="block">
+                <pre>
+                    <code>
+                        for test_images, test_labels in test_dataset.take(1):
+                            test_images = test_images.numpy()
+                            test_labels = test_labels.numpy()
+                            predictions = model.predict(test_images)
+                    </code>
+                </pre>
+            </div>
+            <div class="block">
+                <p class="text">
+                    Посмотрим на первое предсказание:
+                </p>
+            </div>
+            <div class="block">
+                <pre>
+                    <code>
+                        predictions[0]
+                    </code>
+                </pre>
+            </div>
+            <div class="block">
+                <p class="text">
+                    Предсказание представляет собой массив из 10 значений, отражающих «уверенность» модели в том, что полученное на вход изображение, принадлежит к каждому классу одежды:
+                </p>
+            </div>
+            <div class="block">
+                <pre>
+                    <code class="nohighlight">
+                        array([6.2961426e-06, 4.8029669e-06, 1.8312143e-02, 1.5182982e-06,
+                               9.6119004e-01, 1.6114080e-07, 2.0431062e-02, 8.8334772e-08,
+                               5.3994951e-05, 9.0088133e-09], dtype=float32)
+                    </code>
+                </pre>
+            </div>
+            <div class="block">
+                <p class="text">
+                    Воспользуемся методом <code>np.argmax()</code>, чтобы определить, какая метка имеет наибольшее значение:
+                </p>
+            </div>
+            <div class="block">
+                <pre>
+                    <code>
+                        np.argmax(predictions[0])
+                    </code>
+                </pre>
+            </div>
+            <div class="block">
+                <p class="text">
+                    Таким образом, было получено значение, обозначающее класс, к которому с наибольшей вероятностью модель относит данное изображение:
+                </p>
+            </div>
+            <div class="block">
+                <pre>
+                    <code>
+                        4
+                    </code>
+                </pre>
+            </div>
+            <div class="block">
+                <p class="text">
+                    Проверим метку данного изображения в тестовом наборе и убедимся, что она совпадает с той, что определила обученная модель:
+                </p>
+            </div>
+            <div class="block">
+                <pre>
+                    <code>
+                        test_labels[0]
+                    </code>
+                </pre>
+            </div>
+            <div class="block">
+                <p class="text">
+                    Построим графики, на которых отобразим предсказания по каждому из 10 классов для каждого изображения:
+                </p>
+            </div>
+            <div class="block">
+                <pre>
+                    <code>
+                        def plot_image(i, predictions_array, true_labels, images):
+                            predictions_array, true_label, img = predictions_array[i], true_labels[i], images[i]
+                            plt.grid(False)
+                            plt.xticks([])
+                            plt.yticks([])
+                            
+                            plt.imshow(img[...,0], cmap=plt.cm.binary)
+
+                            predicted_label = np.argmax(predictions_array)
+                            if predicted_label == true_label:
+                                color = 'blue'
+                            else:
+                                color = 'red'
+                            
+                            plt.xlabel("{} {:2.0f}% ({})".format(class_names[predicted_label],
+                                                          100*np.max(predictions_array),
+                                                          class_names[true_label]),
+                                                          color=color)
+
+                        def plot_value_array(i, predictions_array, true_label):
+                            predictions_array, true_label = predictions_array[i], true_label[i]
+                            plt.grid(False)
+                            plt.xticks([])
+                            plt.yticks([])
+                            thisplot = plt.bar(range(10), predictions_array, color="#777777")
+                            plt.ylim([0, 1]) 
+                            predicted_label = np.argmax(predictions_array)
+                            
+                            thisplot[predicted_label].set_color('red')
+                            thisplot[true_label].set_color('blue')
+                    </code>
+                </pre>
+            </div>
+            <div class="block">
+                <p class="text">
+                    Выведем на экран 0-е изображение, результат предсказания и массив предсказаний (в виде гистограммы):
+                </p>
+            </div>
+            <div class="block">
+                <pre>
+                    <code>
+                        i = 0
+                        plt.figure(figsize=(6,3))
+                        plt.subplot(1,2,1)
+                        plot_image(i, predictions, test_labels, test_images)
+                        plt.subplot(1,2,2)
+                        plot_value_array(i, predictions, test_labels)
+                    </code>
+                </pre>
+            </div>
+            <div class="block">
+                <p class="center"><img class="center" src="images/5.png"></p>
+            </div>
+            <div class="block">
+                <p class="text">
+                    Построим несколько изображений с их предсказаниями. Корректные предсказания будут выделены синим цветов, а ошибочные — красным.<br>
+                    Процент под изображением означает «уверенность» модели в том, что данное изображение соответствует предсказанному классу.
+                </p>
+            </div>
+            <div class="block">
+                <pre>
+                    <code>
+                        num_rows = 5
+                        num_cols = 3
+                        num_images = num_rows*num_cols
+                        plt.figure(figsize=(2*2*num_cols, 2*num_rows))
+                        for i in range(num_images):
+                            plt.subplot(num_rows, 2*num_cols, 2*i+1)
+                            plot_image(i, predictions, test_labels, test_images)
+                            plt.subplot(num_rows, 2*num_cols, 2*i+2)
+                            plot_value_array(i, predictions, test_labels)
+                    </code>
+                </pre>
+            </div>
+            <div class="block">
+                <p class="center"><img class="center" src="images/6.png"></p>
+            </div>
+            <div class="block">
+                <p class="text">
+                    Даже несмотря на высокий процент «уверенности» в некоторых случаях модель делает неверные предсказания.
+                </p>
+            </div>
+            <div class="block">
+                <p class="text">
+                    Воспользуемся обученной моделью для предсказания метки для одного изображения:
+                </p>
+            </div>
+            <div class="block">
+                <pre>
+                    <code>
+                        img = test_images[0]
+                    </code>
+                </pre>
+            </div>
+            <div class="block">
+                <p class="text">
+                    Модели в Keras делают предсказания по блоку (коллекции) изображений, поэтому даже если используется одно изображение, его необходимо добавить в список:
+                </p>
+            </div>
+            <div class="block">
+                <pre>
+                    <code>
+                        # добавим изображение в список с одним элементом
+                        img = np.array([img])
+                    </code>
+                </pre>
+            </div>
+            <div class="block">
+                <p class="text">
+                    Предскажем результат:
+                </p>
+            </div>
+            <div class="block">
+                <pre>
+                    <code>
+                        predictions_single = model.predict(img)
+
+                        plot_value_array(0, predictions_single, test_labels)
+                        _ = plt.xticks(range(10), class_names, rotation=45)
+                    </code>
+                </pre>
+            </div>
+            <div class="block">
+                <p class="center"><img class="center" src="images/7.png"></p>
+            </div>
+            <div class="block">
+                <p class="text">
+                    Используя <code>np.argmax()</code>, определим номер метки для единственного изображения:
+                </p>
+            </div>
+            <div class="block">
+                <pre>
+                    <code>
+                        np.argmax(predictions_single[0])
+                    </code>
+                </pre>
+            </div>
+            <div class="block">
+                <p class="text">
+                    В итоге получим номер метки, который предсказала модель, и убедимся, что он совпадает с ранее полученным:
+                </p>
+            </div>
+            <div class="block">
+                <pre>
+                    <code>
+                        4
+                    </code>
+                </pre>
+            </div>
+        </div>
+    </section>
+  </body>
+</html>

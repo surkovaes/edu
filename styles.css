@@ -1,0 +1,138 @@
+.navbar.has-righted-menu 
+    .navbar-start {
+      flex-grow: 1;
+      justify-content: right;
+      height: 120px;
+    }
+
+.navbar-item.logo {
+    left: 80px;
+    font-family: 'Montserrat';
+    font-style: normal;
+    font-weight: 600;
+    font-size: 28px;
+}
+
+.navbar-item {
+    right: 80px;
+    font-family: 'Montserrat';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 18px;
+}
+
+.section.title {
+    height: 452px;
+    margin-bottom: 0;
+    background: rgba(0,0,0,0.70) url("https://images.unsplash.com/photo-1590859808308-3d2d9c515b1a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1474&q=80");
+    background-blend-mode: soft-light;
+    background-size: no-repeat;
+    background-position: center;
+    background-size: cover;  
+    border: 0;
+}
+
+.section.title2 {
+    height: 452px;
+}
+
+.section {
+    border: 1px solid rgba(130, 130, 130, 0.3);
+    margin-bottom: 0;
+}
+
+h1.title {
+    font-family: 'Montserrat';
+    font-style: normal;
+    font-weight: 800;
+    font-size: 58px;
+    align-items: center;
+    text-align: center;
+    margin: 40px;
+    padding: 24px 0 0 0;
+    color: white;
+}
+
+.subtitle {
+    font-family: 'Montserrat';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 24px;
+    align-items: center;
+    text-align: center;
+    line-height: 30px;
+    color: white;
+}
+
+h2 {
+    font-family: 'Montserrat';
+    font-style: normal;
+    font-weight: 600;
+    font-size: 40px;
+}
+
+p.text {
+    font-family: 'Montserrat';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 30px;
+}
+
+h3 {
+    font-family: 'Montserrat';
+    font-style: normal;
+    font-weight: 600;
+    font-size: 36px;
+}
+
+.section.right {
+    align-items: right;
+    text-align: right;
+}
+
+.column.is-two-fifths {
+    align-items: center;
+    text-align: center;
+}
+
+.button.go {
+    width: 304px;
+    height: 60px;
+    border-radius: 20px;
+    font-family: 'Montserrat';
+    font-style: normal;
+    font-weight: 600;
+    font-size: 20px;
+}
+
+p.center {
+    text-align: center;
+}
+
+img.center {
+    height: 500px;
+}
+
+h4 {
+    font-family: 'Montserrat';
+    font-style: italic;
+    font-weight: 600;
+    font-size: 28px;
+}
+
+li {
+    font-family: 'Montserrat';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 30px;
+}
+
+pre {
+    background-color: #F0F0F0;
+}
+
+pre code {
+    font-size: 16px;
+}
